@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema version="1.0" 
+	xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="http://www.w3.org/2001/XMLSchema.xsd">
+	
+	<xs:annotation>
+		<xs:documentation xml:lang="ru">
+			ShopAssistant catalog XML representation
+			Copyright 2017 P.Alekseev, pnaleks@gmail.com
+		</xs:documentation>
+	</xs:annotation>
+
+	<xs:complexType name="Icon">
+		<xs:attribute name="rowId" type="xs:long"/>
+		<xs:attribute name="url" type="xs:anyURI"/>
+		<xs:attribute name="driveId" type="xs:NMTOKEN"/>
+	</xs:complexType>
+
+	<xs:complexType name="Swap">
+		<xs:attribute name="rowId" type="xs:long"/>
+		<xs:attribute name="quantity" type="xs:integer" default="1"/>
+		<xs:attribute name="price" type="xs:integer"/>
+		<xs:attribute name="datetime" type="xs:dateTime" use="required"/>
+		<xs:attribute name="delete" type="xs:boolean" default="false"/>
+	</xs:complexType>
+
+	<xs:complexType name="Item">
+		<xs:sequence>
+			<xs:element name="icon" type="Icon" minOccurs="0"/>
+			<xs:element name="note" type="xs:string" minOccurs="0"/>
+			<xs:element name="swap" type="Swap" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="rowId" type="xs:long"/>
+		<xs:attribute name="name" type="xs:token"/>
+		<xs:attribute name="delete" type="xs:boolean" default="false"/>
+	</xs:complexType>
+	
+	<xs:complexType name="Group">
+		<xs:sequence>
+			<xs:element name="icon" type="Icon" minOccurs="0"/>
+			<xs:element name="note" type="xs:string" minOccurs="0"/>
+			<xs:element name="group" type="Group" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="item" type="Item" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="rowId" type="xs:long"/>
+		<xs:attribute name="name" type="xs:token"/>
+		<xs:attribute name="delete" type="xs:boolean" default="false"/>
+	</xs:complexType>
+
+	<xs:complexType name="Preference">
+		<xs:simpleContent>
+			<xs:extension base="xs:token">
+				<xs:attribute name="name" type="xs:token" use="required"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	
+	<xs:element name="ShopAssistant" id="ShopAssistant">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="agreement" type="xs:string" minOccurs="0"/>
+				<xs:element name="pref" type="Preference" minOccurs="0" maxOccurs="unbounded"/>		
+				<xs:element name="catalog" type="Group" minOccurs="0"/>
+				<xs:element name="swaps" minOccurs="0" maxOccurs="unbounded">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="swap" type="Swap"/>
+						</xs:sequence>
+						<xs:attribute name="itemId" type="xs:long" use="required"/>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+			<!-- Атрибуты схемы -->
+			<xs:attribute name="title" type="xs:token"/>
+			<xs:attribute name="version" type="xs:token"/>
+			<xs:attribute name="ignoreRowId" type="xs:boolean" default="false"/>
+			<xs:attribute name="compareNames" type="xs:boolean" default="true"/>	
+		</xs:complexType>
+	</xs:element>
+	
+</xs:schema>
