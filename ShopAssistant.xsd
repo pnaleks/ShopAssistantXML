@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xs:schema version="1.0" 
+<xs:schema
+	version="1.0"
+	targetNamespace="http://www.pnapp.ru/ShopAssistant"
 	xmlns:xs="http://www.w3.org/2001/XMLSchema"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:noNamespaceSchemaLocation="http://www.w3.org/2001/XMLSchema.xsd">
@@ -56,20 +58,13 @@
 		</xs:simpleContent>
 	</xs:complexType>
 	
-	<xs:element name="ShopAssistant" id="ShopAssistant">
+	<xs:element name="catalog" id="catalog">
 		<xs:complexType>
 			<xs:sequence>
 				<xs:element name="agreement" type="xs:string" minOccurs="0"/>
 				<xs:element name="pref" type="Preference" minOccurs="0" maxOccurs="unbounded"/>		
-				<xs:element name="catalog" type="Group" minOccurs="0"/>
-				<xs:element name="swaps" minOccurs="0" maxOccurs="unbounded">
-					<xs:complexType>
-						<xs:sequence>
-							<xs:element name="swap" type="Swap"/>
-						</xs:sequence>
-						<xs:attribute name="itemId" type="xs:long" use="required"/>
-					</xs:complexType>
-				</xs:element>
+				<xs:element name="group" type="Group" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element name="item" type="Item" minOccurs="0" maxOccurs="unbounded"/>
 			</xs:sequence>
 			<!-- Атрибуты схемы -->
 			<xs:attribute name="title" type="xs:token"/>
