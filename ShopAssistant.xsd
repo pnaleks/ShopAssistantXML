@@ -14,16 +14,16 @@
 	</xs:annotation>
 
 	<xs:complexType name="Icon">
-		<xs:attribute name="rowId" type="xs:long"/>
+		<xs:attribute name="rowId" type="xs:long" use="required"/>
 		<xs:attribute name="url" type="xs:anyURI"/>
 		<xs:attribute name="driveId" type="xs:NMTOKEN"/>
 	</xs:complexType>
 
 	<xs:complexType name="Swap">
-		<xs:attribute name="rowId" type="xs:long"/>
-		<xs:attribute name="quantity" type="xs:integer" default="1"/>
-		<xs:attribute name="price" type="xs:integer"/>
 		<xs:attribute name="datetime" type="xs:dateTime" use="required"/>
+		<xs:attribute name="quantity" type="xs:integer" use="required"/>
+		<xs:attribute name="price" type="xs:integer"/>
+		<xs:attribute name="rowId" type="xs:long"/>
 		<xs:attribute name="delete" type="xs:boolean" default="false"/>
 	</xs:complexType>
 
@@ -68,9 +68,9 @@
 			</xs:sequence>
 			<!-- Атрибуты схемы -->
 			<xs:attribute name="title" type="xs:token"/>
-			<xs:attribute name="version" type="xs:token"/>
-			<xs:attribute name="ignoreRowId" type="xs:boolean" default="false"/>
-			<xs:attribute name="compareNames" type="xs:boolean" default="true"/>	
+			<xs:attribute name="version" type="xs:token" use="optional"/>
+			<xs:attribute name="ignoreRowId" type="xs:boolean" default="false" use="optional"/>
+			<xs:attribute name="compareNames" type="xs:boolean" default="true" use="optional"/>
 		</xs:complexType>
 	</xs:element>
 	
