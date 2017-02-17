@@ -1,0 +1,102 @@
+apply plugin: 'com.android.library'
+apply plugin: 'com.jfrog.bintray'
+apply plugin: 'com.github.dcendents.android-maven'
+
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+
+android {
+    compileSdkVersion 25
+    buildToolsVersion "24.0.2"
+    defaultConfig {
+        minSdkVersion 8
+        targetSdkVersion 25
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    productFlavors {
+    }
+    return void
+}
+
+def siteUrl = 'https://github.com/pnaleks/ShopAssistantXML'
+def gitUrl = 'https://github.com/pnaleks/ShopAssistantXML.git'
+
+bintray {
+    user = properties.getProperty('bintray_user')
+    key = properties.getProperty('bintray_key')
+
+    version = '1.0'
+    //configurations = ['published', 'archives']
+    configurations = ['archives']
+    dryRun = false
+    publish = true
+
+    pkg {
+        group = 'ru.pnapp'
+        repo = 'pnapp'
+        name = 'sa-xml'
+        desc = 'XML parser for ShopAssistant project'
+        websiteUrl = siteUrl
+        issueTrackerUrl = 'https://github.com/pnaleks/ShopAssistantXML/issues'
+        vcsUrl = gitUrl
+        licenses = ['Apache-2.0']
+        //labels = ['aar', 'android', 'example']
+        publicDownloadNumbers = true
+        version {
+            name = '1.0'
+            desc = 'First approach'
+            vcsTag = '1.0'
+        }
+    }
+}
+
+install {
+    repositories.mavenInstaller {
+        pom {
+            project {
+                packaging 'aar'
+                name 'XML parser for ShopAssistant project'
+                url siteUrl
+                licenses {
+                    license {
+                        name 'The Apache Software License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                developers {
+                    developer {
+                        id 'pnaleks'
+                        name 'Petr Alekseev'
+                        email 'pnaleks@jmail.com'
+                    }
+                }
+                scm {
+                    //connection 'https://github.com/bintray/bintray-examples.git'
+                    //developerConnection 'https://github.com/bintray/bintray-examples.git'
+                    url siteUrl
+                }
+            }
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    compile('org.simpleframework:simple-xml:2.7.1') {
+        exclude module: 'stax'
+        exclude module: 'stax-api'
+        exclude module: 'xpp3'
+    }
+    testCompile 'junit:junit:4.12'
+}

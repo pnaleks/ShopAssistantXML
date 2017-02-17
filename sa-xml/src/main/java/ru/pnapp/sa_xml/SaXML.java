@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings({"WeakerAccess", "unused"})
-@NamespaceList({@Namespace(reference = "http://www.pnapp.ru/ShopAssistant", prefix = "sa_xml")})
+@NamespaceList({@Namespace(reference = "http://www.pnapp.ru/ShopAssistant", prefix = "sa")})
 @Root(name = "catalog")
 public class SaXML {
 
