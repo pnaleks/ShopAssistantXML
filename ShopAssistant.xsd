@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema
-	version="1.0"
+	version="1.0.2"
 	targetNamespace="http://www.pnapp.ru/ShopAssistant"
 	xmlns:xs="http://www.w3.org/2001/XMLSchema"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -21,8 +21,8 @@
 
 	<xs:complexType name="Swap">
 		<xs:attribute name="datetime" type="xs:dateTime" use="required"/>
-		<xs:attribute name="quantity" type="xs:integer" use="required"/>
-		<xs:attribute name="price" type="xs:integer"/>
+		<xs:attribute name="quantity" type="xs:float" use="required"/>
+		<xs:attribute name="price" type="xs:float"/>
 		<xs:attribute name="rowId" type="xs:long"/>
 		<xs:attribute name="delete" type="xs:boolean" default="false"/>
 	</xs:complexType>
@@ -36,6 +36,7 @@
 		<xs:attribute name="rowId" type="xs:long"/>
 		<xs:attribute name="name" type="xs:token"/>
 		<xs:attribute name="delete" type="xs:boolean" default="false"/>
+		<xs:attribute name="quantity" type="xs:float" use="optional"/>
 	</xs:complexType>
 	
 	<xs:complexType name="Group">
@@ -65,8 +66,16 @@
 				<xs:element name="pref" type="Preference" minOccurs="0" maxOccurs="unbounded"/>		
 				<xs:element name="group" type="Group" minOccurs="0" maxOccurs="unbounded"/>
 				<xs:element name="item" type="Item" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element name="swap" minOccurs="0" maxOccurs="unbounded">
+					<xs:complexType>
+						<xs:complexContent>
+							<xs:extension base="Swap">
+								<xs:attribute name="itemId" type="xs:long" use="required"/>
+							</xs:extension>
+						</xs:complexContent>
+					</xs:complexType>
+				</xs:element>
 			</xs:sequence>
-			<!-- Атрибуты схемы -->
 			<xs:attribute name="title" type="xs:token"/>
 			<xs:attribute name="version" type="xs:token" use="optional"/>
 			<xs:attribute name="ignoreRowId" type="xs:boolean" default="false" use="optional"/>
