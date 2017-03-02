@@ -5,11 +5,15 @@ import org.junit.Test;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -102,5 +106,128 @@ public class ExampleUnitTest {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         SaXML.put(sa, bos);
         System.out.println(bos);
+    }
+
+    @Test
+    public void test_v3() throws Exception {
+        SaXML sa = new SaXML();
+        sa.title = "Test v3 XML";
+        sa.version = "3";
+
+        SaXML.Item item;
+        sa.items = new ArrayList<>();
+
+        item = new SaXML.Item();
+        item.rowId = 1;
+        item.name = "Item 1 (five)";
+        item.quantity = 5L;
+        sa.items.add(item);
+
+        item = new SaXML.Item();
+        item.rowId = 2;
+        item.name = "Item 2 (null)";
+        item.quantity = null;
+        sa.items.add(item);
+
+        SaXML.SwapEx swapEx;
+        sa.swaps = new ArrayList<>();
+
+        swapEx = new SaXML.SwapEx();
+        swapEx.datetime = new Date();
+        swapEx.itemId = 2;
+        swapEx.rowId = 1;
+        swapEx.quantity = 5;
+        swapEx.price = 1200F;
+        sa.swaps.add(swapEx);
+
+        swapEx = new SaXML.SwapEx();
+        swapEx.datetime = new Date();
+        swapEx.itemId = 1;
+        swapEx.rowId = 2;
+        swapEx.quantity = 4;
+        swapEx.price = 1800F;
+        sa.swaps.add(swapEx);
+
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        SaXML.put(sa, bos);
+        System.out.println(bos);
+
+        ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
+        SaXML sb = SaXML.get(bis);
+
+        assertTrue(compare(sa, sb));
+    }
+
+    private boolean compare(SaXML a, SaXML b) {
+        if (a == null) return b == null;
+
+        return b != null && a.title.equals(b.title) &&
+                (a.version == null ? b.version == null : a.version.equals(b.version)) &&
+                (a.ignoreRowId == null ? b.ignoreRowId == null : a.ignoreRowId.equals(b.ignoreRowId)) &&
+                (a.compareNames == null ? b.compareNames == null : a.compareNames.equals(b.compareNames)) &&
+                (a.agreement == null ? b.agreement == null : a.agreement.equals(b.agreement)) &&
+                compareGroups(a.groups, b.groups) &&
+                compareItems(a.items, b.items) &&
+                compareSwaps(a.swaps, b.swaps);
+    }
+
+    private boolean compareGroups(List<SaXML.Group> a, List<SaXML.Group> b) {
+        if (a == null) return b == null;
+        if (b == null) return false;
+        if (a.size() != b.size()) return false;
+        boolean result = false;
+        for (SaXML.Group ag : a) {
+            for (SaXML.Group bg : b) {
+                result = (ag.rowId == bg.rowId) &&
+                        (ag.name == null ? bg.name == null : ag.name.equals(bg.name)) &&
+                        compareGroups(ag.groupsList, bg.groupsList) &&
+                        compareItems(ag.itemsList, bg.itemsList);
+                if (result) break;
+            }
+            if (!result) return false;
+        }
+        return true;
+    }
+
+    private boolean compareItems(List<SaXML.Item> a, List<SaXML.Item> b) {
+        if (a == null) return b == null;
+        if (b == null) return false;
+        if (a.size() != b.size()) return false;
+        boolean result = false;
+        for (SaXML.Item ai : a) {
+            for (SaXML.Item bi : b) {
+                result = (ai.rowId == bi.rowId) &&
+                        (ai.name == null ? bi.name == null : ai.name.equals(bi.name)) &&
+                        (ai.quantity == null ? bi.quantity == null : ai.quantity.equals(bi.quantity)) &&
+                        compareSwaps(ai.swapsList, bi.swapsList);
+                if (result) break;
+            }
+            if (!result) return false;
+        }
+        return true;
+    }
+
+    private boolean compareSwaps(List<? extends SaXML.Swap> a, List<? extends SaXML.Swap> b) {
+        if (a == null) return b == null;
+        if (b == null) return false;
+        if (a.size() != b.size()) return false;
+        boolean result = false;
+        for (SaXML.Swap as : a) {
+            for (SaXML.Swap bs : b) {
+                result = false;
+                if (as instanceof SaXML.SwapEx) {
+                    if (bs instanceof SaXML.SwapEx) {
+                        result = ((SaXML.SwapEx) as).itemId == ((SaXML.SwapEx) bs).itemId;
+                    }
+                    if (!result) continue;
+                }
+                result = (as.rowId == bs.rowId) &&
+                        (as.price == null ? bs.price == null : as.price.equals(bs.price)) &&
+                        (as.quantity == bs.quantity);
+                if (result) break;
+            }
+            if (!result) return false;
+        }
+        return true;
     }
 }
