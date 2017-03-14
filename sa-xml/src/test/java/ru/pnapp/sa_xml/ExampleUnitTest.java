@@ -5,6 +5,7 @@ import org.junit.Test;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.lang.reflect.Field;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -120,7 +121,7 @@ public class ExampleUnitTest {
         item = new SaXML.Item();
         item.rowId = 1;
         item.name = "Item 1 (five)";
-        item.quantity = 5L;
+        item.quantity = 5F;
         sa.items.add(item);
 
         item = new SaXML.Item();
@@ -156,6 +157,35 @@ public class ExampleUnitTest {
         SaXML sb = SaXML.get(bis);
 
         assertTrue(compare(sa, sb));
+    }
+
+    @Test
+    public void test_rootIcons() throws Exception {
+        SaXML sa = new SaXML();
+        sa.title = "Test icons at the root of the catalog";
+        sa.version = "3";
+
+        sa.icons = new ArrayList<>();
+
+        SaXML.Icon icon = new SaXML.Icon();
+        icon.rowId = 1;
+        icon.url = new URL("http://some.image.host/some_image.img");
+        icon.driveId = "driveId:sdsafdoijewqoidj==";
+
+        sa.icons.add(icon);
+
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        SaXML.put(sa, bos);
+        System.out.println(bos);
+
+        ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
+        SaXML sb = SaXML.get(bis);
+
+        assertNotNull(sb.icons);
+        assertEquals(sa.icons.size(), sb.icons.size());
+        assertEquals(sa.icons.get(0).rowId, sb.icons.get(0).rowId);
+        assertEquals(sa.icons.get(0).url, sb.icons.get(0).url);
+        assertEquals(sa.icons.get(0).driveId, sb.icons.get(0).driveId);
     }
 
     private boolean compare(SaXML a, SaXML b) {

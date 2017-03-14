@@ -13,7 +13,6 @@ import org.simpleframework.xml.core.Persister;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -177,13 +176,19 @@ public class SaXML {
      * Список элементов в корне, не привязанных к конкретной группе
      */
     @ElementList(entry = "item", inline = true, required = false)
-    public ArrayList<Item> items;
+    public List<Item> items;
 
     /**
      * Список сделок в корне с непосредственным указанием связанного элемента через {@link SwapEx#itemId}
      */
     @ElementList(entry = "swap", inline = true, required = false)
-    public ArrayList<SwapEx> swaps;
+    public List<SwapEx> swaps;
+
+    /**
+     * Список изображений в корне. Позволяет экспортировать только изображения.
+     */
+    @ElementList(entry = "icon", inline = true, required = false)
+    public List<Icon> icons;
 
     /**
      * Имя файла базы данных

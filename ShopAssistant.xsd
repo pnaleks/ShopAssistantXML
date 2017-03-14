@@ -63,6 +63,7 @@
 		<xs:complexType>
 			<xs:sequence>
 				<xs:element name="agreement" type="xs:string" minOccurs="0"/>
+				<xs:element name="icon" type="Icon" minOccurs="0" maxOccurs="unbounded"/>
 				<xs:element name="pref" type="Preference" minOccurs="0" maxOccurs="unbounded"/>		
 				<xs:element name="group" type="Group" minOccurs="0" maxOccurs="unbounded"/>
 				<xs:element name="item" type="Item" minOccurs="0" maxOccurs="unbounded"/>
