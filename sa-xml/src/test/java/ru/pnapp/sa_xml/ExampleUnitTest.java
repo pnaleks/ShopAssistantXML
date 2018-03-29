@@ -188,6 +188,49 @@ public class ExampleUnitTest {
         assertEquals(sa.icons.get(0).driveId, sb.icons.get(0).driveId);
     }
 
+    @Test
+    public void test_xsd_1_0_3() throws Exception {
+        SaXML sa = new SaXML();
+        sa.title = "Test for xsd version 1.0.3";
+        sa.version = "4";
+
+        SaXML.Icon icon = new SaXML.Icon();
+        icon.keep = true;
+
+        sa.icons = new ArrayList<>();
+        sa.icons.add(icon);
+
+        SaXML.Item item = new SaXML.Item();
+        item.hidden = false;
+        item.name = "item";
+
+        SaXML.Item subItem = new SaXML.Item();
+        subItem.hidden = true;
+        subItem.name = "subItem";
+
+        item.itemsList = new ArrayList<>();
+        item.itemsList.add(subItem);
+
+        SaXML.Group group = new SaXML.Group();
+        group.hidden = false;
+        group.name = "group";
+
+        group.itemsList = new ArrayList<>();
+        group.itemsList.add(item);
+
+        sa.groups = new ArrayList<>();
+        sa.groups.add(group);
+
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        SaXML.put(sa, bos);
+        System.out.println(bos);
+
+        ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
+        SaXML sb = SaXML.get(bis);
+
+        assertTrue(compare(sa, sb));
+    }
+
     private boolean compare(SaXML a, SaXML b) {
         if (a == null) return b == null;
 
@@ -198,7 +241,8 @@ public class ExampleUnitTest {
                 (a.agreement == null ? b.agreement == null : a.agreement.equals(b.agreement)) &&
                 compareGroups(a.groups, b.groups) &&
                 compareItems(a.items, b.items) &&
-                compareSwaps(a.swaps, b.swaps);
+                compareSwaps(a.swaps, b.swaps) &&
+                compareIcons(a.icons, b.icons);
     }
 
     private boolean compareGroups(List<SaXML.Group> a, List<SaXML.Group> b) {
@@ -210,6 +254,8 @@ public class ExampleUnitTest {
             for (SaXML.Group bg : b) {
                 result = (ag.rowId == bg.rowId) &&
                         (ag.name == null ? bg.name == null : ag.name.equals(bg.name)) &&
+                        (ag.delete == bg.delete) &&
+                        (ag.hidden == bg.hidden) &&
                         compareGroups(ag.groupsList, bg.groupsList) &&
                         compareItems(ag.itemsList, bg.itemsList);
                 if (result) break;
@@ -229,7 +275,10 @@ public class ExampleUnitTest {
                 result = (ai.rowId == bi.rowId) &&
                         (ai.name == null ? bi.name == null : ai.name.equals(bi.name)) &&
                         (ai.quantity == null ? bi.quantity == null : ai.quantity.equals(bi.quantity)) &&
-                        compareSwaps(ai.swapsList, bi.swapsList);
+                        (ai.delete == bi.delete) &&
+                        (ai.hidden == bi.hidden) &&
+                        compareSwaps(ai.swapsList, bi.swapsList) &&
+                        compareItems(ai.itemsList, bi.itemsList);
                 if (result) break;
             }
             if (!result) return false;
@@ -254,6 +303,24 @@ public class ExampleUnitTest {
                 result = (as.rowId == bs.rowId) &&
                         (as.price == null ? bs.price == null : as.price.equals(bs.price)) &&
                         (as.quantity == bs.quantity);
+                if (result) break;
+            }
+            if (!result) return false;
+        }
+        return true;
+    }
+
+    private boolean compareIcons(List<? extends SaXML.Icon> a, List<? extends SaXML.Icon> b) {
+        if (a == null) return b == null;
+        if (b == null) return false;
+        if (a.size() != b.size()) return false;
+        boolean result = false;
+        for (SaXML.Icon as : a) {
+            for (SaXML.Icon bs : b) {
+                result = (as.rowId == bs.rowId) &&
+                        (as.url == null ? bs.url == null : as.url.equals(bs.url)) &&
+                        (as.driveId == null ? bs.driveId == null : as.driveId.equals(bs.driveId)) &&
+                        (as.keep == bs.keep);
                 if (result) break;
             }
             if (!result) return false;

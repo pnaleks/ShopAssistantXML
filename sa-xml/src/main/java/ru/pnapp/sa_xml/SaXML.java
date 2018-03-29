@@ -40,8 +40,8 @@ public class SaXML {
      */
     @Root
     public static class Icon {
-        /** Уникальный идентификатор группы в базе данных */
-        @Attribute
+        /** Уникальный идентификатор изображения в базе данных, если не задан, будкт создана новая запись */
+        @Attribute(required = false)
         public long rowId;
 
         @Attribute(required = false)
@@ -49,6 +49,10 @@ public class SaXML {
 
         @Attribute(required = false)
         public String driveId;
+
+        /** Предотвращает изменение атрибутов url и driveId при загрузке из внешнего источника */
+        @Attribute(required = false)
+        public Boolean keep;
     }
 
     /** Сделки (продажи, поступления товара и т.п.). Значение {@link #quantity} может иметь знак. Элемент используется для
@@ -93,6 +97,9 @@ public class SaXML {
         @Element(required = false)
         public String note;
 
+        @ElementList(entry = "item", inline = true, required = false)
+        public List<Item> itemsList;
+
         @ElementList(entry = "swap", inline = true, required = false)
         public List<Swap> swapsList;
 
@@ -106,6 +113,10 @@ public class SaXML {
         /** Флаг предписывающий удалить элемент из базы данных */
         @Attribute(required = false)
         public Boolean delete;
+
+        /** Флаг предписывающий скрыть элемент от пользователя */
+        @Attribute(required = false)
+        public Boolean hidden;
 
         /** Остаток продукции на складе и т.п. Количество товара, которое не может быть выражено через {@link Swap} */
         @Attribute(required = false)
@@ -140,6 +151,10 @@ public class SaXML {
         /** Флаг предписывающий удалить элемент из базы данных */
         @Attribute(required = false)
         public Boolean delete;
+
+        /** Флаг предписывающий скрыть элемент от пользователя */
+        @Attribute(required = false)
+        public Boolean hidden;
     }
 
     /**
@@ -232,7 +247,7 @@ public class SaXML {
      * Десериализация
      * @param inputStream входной поток данных
      * @return результат десериализации функцией {@code Serializer#read(Class, InputStream)}
-     * @throws Exception
+     * @throws Exception исключение
      */
     public static SaXML get(InputStream inputStream) throws Exception {
         Serializer serializer = new Persister();
@@ -243,7 +258,7 @@ public class SaXML {
      * Сериализация
      * @param xml объект для сериализации
      * @param outputStream поток для вывода данных
-     * @throws Exception
+     * @throws Exception исключение
      */
     public static void put(SaXML xml, OutputStream outputStream) throws Exception {
         new Persister().write(xml, outputStream);
